@@ -11,8 +11,8 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.use(cors());
 app.use(express.json());
-// app.use(express.static("public"));
-// app.use("images", express.static("images"));
+app.use(express.static("public"));
+app.use("images", express.static("images"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(port, () => {
@@ -33,7 +33,7 @@ connection.connect((err) => {
 //multer storage to store image
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/images");
+    cb(null, "./public/images");
   },
   filename: function (req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -61,7 +61,7 @@ app.get("/all", async (req, res) => {
   }
 });
 //post request to list of meals in specific category..
-app.get("/recipie", async (req, res) => {
+app.post("/recipie", async (req, res) => {
   const category = req.body.category;
   try {
     connection.query(
@@ -105,16 +105,22 @@ app.post("/addrecipie", upload.single("image"), (req, res) => {
   const name = req.body.recipieName;
   const category = req.body.Category;
   const instruction = req.body.instruction;
-  const image = req.file.path;
-  console.log(image);
+  const host = req.host;
+  const filePath =
+    req.protocol +
+    "://" +
+    host +
+    ":" +
+    port +
+    req.file.path.replace(/\\/g, "/").substring("public".length);
   const id = Math.floor(Math.random() * 1000);
   var query = `INSERT INTO recipie (recipieId,recipieName,Category,image,instruction) 
   values ?`;
-  var values = [[id, name, category, image, instruction]];
+  var values = [[id, name, category, filePath, instruction]];
   try {
     connection.query(query, [values], (err, result) => {
       res.send("record added successfully");
-      console.log(image);
+      console.log(filePath);
     });
   } catch (err) {
     console.log(err);

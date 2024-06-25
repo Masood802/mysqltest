@@ -6,19 +6,19 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>Recipies DataBase</h1>
+    <h1 style="text-align: center;">Recipies DataBase</h1>
     <form
       action="/addrecipie"
       method="POST"
       enctype="multipart/form-data"
-      style="display: flex; flex-direction: column"
+      style="display: flex; flex-direction: column; width:50%; margin:auto;"
     >
       <label for="recipieName">Enter Recipie name:</label>
       <input type="text" name="recipieName" />
       <label for="Category">select Category name:</label>
       <select name="Category">
-        <option value="beef">Beef</option>
-        <option value="chicken">Chicken</option>
+        <option value="Beef">Beef</option>
+        <option value="Chicken">Chicken</option>
         <option value="Dessert">Dessert</option>
         <option value="Lamb">Lamb</option>
         <option value="Miscellaneous">Miscellaneous</option>
@@ -30,10 +30,12 @@
       <textarea
         name="instruction"
         placeholder="enter recipie methods"
+        cols="20"
+        rows="15"
       ></textarea>
       <label for="image">Upload a file</label>
-      <input type="file" name="image" />
-      <button type="submit" name="submit" style="margin: 10px">Submit</button>
+      <input type="file" name="image" required />
+      <button type="submit" name="submit" style="margin:10px">Submit</button>
     </form>
   </body>
 </html>

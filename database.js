@@ -4,6 +4,7 @@ const cors = require("cors");
 var path = require("path");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+const { Console } = require("console");
 
 const port = process.env.port || 4000;
 app = express();
@@ -53,7 +54,6 @@ app.get("/all", async (req, res) => {
       if (err) {
         console.log(err);
       }
-      console.log(result);
       res.send(result);
     });
   } catch (error) {
@@ -63,6 +63,7 @@ app.get("/all", async (req, res) => {
 //post request to list of meals in specific category..
 app.post("/recipie", async (req, res) => {
   const category = req.body.category;
+  console.log(req.body);
   try {
     connection.query(
       `select * from recipie where Category="${category}"`,
@@ -70,8 +71,11 @@ app.post("/recipie", async (req, res) => {
         if (err) {
           console.log(err);
         }
-        console.log(category);
+        if(result.length===0)
+        res.send("No recipie found in this Category");
+        else {
         res.send(result);
+        }
       }
     );
   } catch (error) {
@@ -91,7 +95,6 @@ app.post("/details", async (req, res) => {
         if (result.length > 0) {
           res.send(result);
         } else {
-          console.log(req.body);
           res.send(`NO match found for this recipie id:${id}`);
         }
       }
@@ -112,6 +115,7 @@ app.post("/addrecipie", upload.single("image"), (req, res) => {
     host +
     ":" +
     port +
+    //replacing \ with / in file path
     req.file.path.replace(/\\/g, "/").substring("public".length);
   const id = Math.floor(Math.random() * 1000);
   var query = `INSERT INTO recipie (recipieId,recipieName,Category,image,instruction) 
@@ -121,6 +125,7 @@ app.post("/addrecipie", upload.single("image"), (req, res) => {
     connection.query(query, [values], (err, result) => {
       res.send("record added successfully");
       console.log(filePath);
+      console.log(Date.now());
     });
   } catch (err) {
     console.log(err);
